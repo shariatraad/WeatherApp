@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:orientation="vertical">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/autocomplete_fragment"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#55FFFFFF" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/apiAttributionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_blue"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/apiAttributionLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_star_24"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/apiAttributionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:text="@string/API_explanation"
+                android:gravity="center"
+                android:background="@color/dark_blue" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

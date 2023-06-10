@@ -1,0 +1,20 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.WeatherApp" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#03A9F4</item>
+        <item name="colorPrimaryVariant">#0288D1</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#009688</item>
+        <item name="colorSecondaryVariant">#00796B</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">#03A9F4</item>
+        <!-- Action bar -->
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <!-- Customize your theme here. -->
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+</resources>

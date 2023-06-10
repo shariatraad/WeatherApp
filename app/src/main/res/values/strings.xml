@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Weather App</string>
+    <string name="forecast_temp_high">High: %.1f°C</string>
+    <string name="forecast_temp_low">Low: %.1f°C</string>
+    <string name="forecast_precipitation">Precipitation: %.1f%%</string>
+    <string name="API_explanation">API provided by WeatherBit.io</string>
+    <string name="precipitation_zero_text">WeatherBit indicates that the precipitation is zero for all days</string>
+    <string name="menu_search">Search Location</string>
+    <string name="autocomplete_canceled">Autocomplete canceled</string>
+    <string name="autocomplete_interrupted">Autocomplete interrupted</string>
+    <string name="unknown_error_occurred">Unknown error occurred</string>
+    <string name="json_parsing_error">JSON Parsing error</string>
+    <string name="connection_timed_out">Connection timed out</string>
+    <string name="no_connection_to_server">No connection to the server</string>
+    <string name="server_error">Server error</string>
+    <string name="can_not_find_city_name">Cannot find the city name</string>
+    <string name="action_sync">Sync weather data</string>
+    <string name="sync_finished">Weather data updated successfully!</string>
+</resources>
