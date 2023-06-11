@@ -15,31 +15,21 @@ import com.myapp.weatherapp.models.WeatherItem;
 import com.myapp.weatherapp.utils.DateUtils;
 import com.myapp.weatherapp.utils.WeatherIconMapper;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeatherAdapter.MyViewHolder> {
     private final List<WeatherItem> weatherItems;
     private final Context context;
 
     public ForecastWeatherAdapter(List<WeatherItem> weatherItems, Context context) {
-        if (weatherItems == null) {
-            throw new IllegalArgumentException("WeatherItems list cannot be null");
-        }
-        if (context == null) {
-            throw new IllegalArgumentException("Context cannot be null");
-        }
-
         this.weatherItems = weatherItems;
         this.context = context;
-        new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.forecast_weather_item, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -47,8 +37,8 @@ public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeather
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         WeatherItem weatherItem = weatherItems.get(position);
 
-        holder.dayTextView.setText(DateUtils.formatDayOfWeek(weatherItem.getDate()));
-        holder.dateTextView.setText(DateUtils.formatDate(weatherItem.getDate()));
+        holder.dayTextView.setText(DateUtils.formatDayOfWeekForecast(weatherItem.getDate(), weatherItem.getTimeZone()));
+        holder.dateTextView.setText(DateUtils.formatDateForecast(weatherItem.getDate(), weatherItem.getTimeZone()));
         holder.tempHighTextView.setText(context.getString(R.string.forecast_temp_high, weatherItem.getTempMax()));
         holder.tempLowTextView.setText(context.getString(R.string.forecast_temp_low, weatherItem.getTempMin()));
         holder.precipitationTextView.setText(context.getString(R.string.forecast_precipitation, weatherItem.getPrecipitation()));
@@ -74,7 +64,6 @@ public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeather
 
         public MyViewHolder(View itemView) {
             super(itemView);
-
             dayTextView = itemView.findViewById(R.id.dayTextView);
             dateTextView = itemView.findViewById(R.id.dateTextView);
             tempHighTextView = itemView.findViewById(R.id.tempHighTextView);

@@ -38,10 +38,11 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.myapp.weatherapp.R;
 import com.myapp.weatherapp.adapters.WeatherPagerAdapter;
-import com.myapp.weatherapp.models.WeatherItem;
 import com.myapp.weatherapp.utils.Constants;
+import com.myapp.weatherapp.viewmodels.LoadState;
 import com.myapp.weatherapp.viewmodels.WeatherViewModel;
 
 import java.io.IOException;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isAutocompleteVisible = true;
     private boolean isSyncing = false;
-    private boolean isFirstSync = true;
     private String chosenLocation;
 
     private ActionBar actionBar;
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupViews();
         setupWeatherViewModel();
+        AndroidThreeTen.init(this);
         setupLocation();
         setupPlacePicker();
         setupViewPager();
@@ -91,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 getLastLocation();
             } else {
                 chosenLocation = Constants.DEFAULT_CITY;
-                getWeatherForecast(chosenLocation);
+                setTitleAsCityName(chosenLocation);
+                weatherViewModel.setChosenLocation(chosenLocation);
             }
         }
     }
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.menu_sync) {
             if (!isSyncing) {
-                getWeatherForecast(chosenLocation);
+                weatherViewModel.refreshData(this);
             }
             return true;
         }
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    bottomNavigationView.setSelectedItemId(R.id.today_weather);
+                    bottomNavigationView.setSelectedItemId(R.id.current_weather);
                 } else {
                     bottomNavigationView.setSelectedItemId(R.id.weather_forecast);
                 }
@@ -156,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.today_weather) {
+            if (item.getItemId() == R.id.current_weather) {
                 viewPager.setCurrentItem(0);
                 return true;
             } else if (item.getItemId() == R.id.weather_forecast) {
@@ -169,7 +171,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupWeatherViewModel() {
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
-        weatherViewModel.getWeatherItemsLiveData().observe(this, this::handleWeatherForecastResponse);
+        weatherViewModel.getState().observe(this, loadState -> {
+            if (loadState instanceof LoadState.Loading) {
+                startSyncAnimation();
+            } else {
+                finishSyncAnimation();
+            }
+        });
     }
 
     private void setupLocation() {
@@ -193,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 chosenLocation = place.getName();
-                getWeatherForecast(chosenLocation);
+                setTitleAsCityName(chosenLocation);
+                weatherViewModel.setChosenLocation(chosenLocation);
                 hideAutocompleteFragment();
             }
 
@@ -244,11 +253,19 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful() && task.getResult() != null) {
                     Location location = task.getResult();
                     chosenLocation = getCityName(this, location.getLatitude(), location.getLongitude());
+                } else {
+                    chosenLocation = Constants.DEFAULT_CITY;
                 }
-                getWeatherForecast(chosenLocation);
+                setTitleAsCityName(chosenLocation);
+                weatherViewModel.setChosenLocation(chosenLocation);
             });
+        } else {
+            chosenLocation = Constants.DEFAULT_CITY;
+            setTitleAsCityName(chosenLocation);
+            weatherViewModel.setChosenLocation(chosenLocation);
         }
     }
+
 
     private String getCityName(Context context, double latitude, double longitude) {
         String cityName = "";
@@ -262,20 +279,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.can_not_find_city_name), Toast.LENGTH_SHORT).show();
         }
         return cityName;
-    }
-
-    private void getWeatherForecast(String chosenLocation) {
-        if (chosenLocation != null) {
-            startSync();
-            setTitleAsCityName(chosenLocation);
-            weatherViewModel.getWeatherForecast(this, chosenLocation);
-        }
-    }
-
-    private void handleWeatherForecastResponse(List<WeatherItem> newWeatherItems) {
-        finishSync();
-        if (isFirstSync)
-            isFirstSync = false;
     }
 
     public void animateIcon(ImageView imageView) {
@@ -292,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startSync() {
+    private void startSyncAnimation() {
         isSyncing = true;
         if (syncMenuItem != null) {
             View actionView = syncMenuItem.getActionView();
@@ -302,16 +305,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void finishSync() {
+    private void finishSyncAnimation() {
         isSyncing = false;
         if (syncMenuItem != null) {
             View actionView = syncMenuItem.getActionView();
             ImageView imageView = actionView.findViewById(R.id.action_sync_icon);
             actionView.setEnabled(true);
             imageView.clearAnimation();
-            if (!isFirstSync) {
-                Toast.makeText(this, getString(R.string.sync_finished), Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,8 +41,8 @@ public class ForecastWeatherFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_forecast_weather, container, false);
         setupViews(view);
-        setupAdapter();
         setupWeatherViewModel();
+        setupAdapter();
         return view;
     }
 
@@ -59,15 +61,21 @@ public class ForecastWeatherFragment extends Fragment {
 
     private void setupWeatherViewModel() {
         WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
-        weatherViewModel.getWeatherItemsLiveData().observe(getViewLifecycleOwner(), this::handleWeatherForecastResponse);
+        weatherViewModel.getWeatherForecastLiveData().observe(getViewLifecycleOwner(), this::handleWeatherForecastResponse);
         weatherViewModel.getState().observe(getViewLifecycleOwner(), this::handleLoadState);
+        weatherViewModel.getChosenLocation().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String newLocation) {
+                weatherViewModel.getWeatherForecast(requireActivity());
+            }
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void handleWeatherForecastResponse(List<WeatherItem> newWeatherItems) {
         if (newWeatherItems.size() > 1) {
             weatherItems.clear();
-            weatherItems.addAll(newWeatherItems.subList(1, newWeatherItems.size()));
+            weatherItems.addAll(newWeatherItems);
             forecastWeatherAdapter.notifyDataSetChanged();
         }
     }

@@ -3,6 +3,7 @@
     <string name="forecast_temp_high">High: %.1f°C</string>
     <string name="forecast_temp_low">Low: %.1f°C</string>
     <string name="forecast_precipitation">Precipitation: %.1f%%</string>
+    <string name="current_temp">%.1f°C</string>
     <string name="API_explanation">API provided by WeatherBit.io</string>
     <string name="precipitation_zero_text">WeatherBit indicates that the precipitation is zero for all days</string>
     <string name="menu_search">Search Location</string>
@@ -19,4 +20,7 @@
     <string name="today">Today</string>
     <string name="forecast">Forecast</string>
     <string name="do_not_show_again">Don\'t show this again</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+
 </resources>

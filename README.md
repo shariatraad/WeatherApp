@@ -35,7 +35,13 @@ public class Constants {
 
 This project uses the following third-party dependencies and APIs:
 
-- **Google Places API** (https://developers.google.com/maps/documentation/places/web-service) - Used for location services. Please see Google's [Terms of Service](https://developers.google.com/terms).
+- **com.jakewharton.threetenabp** (https://github.com/JakeWharton/ThreeTenABP)
+  - License URL: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-- **WeatherBit API** (https://www.weatherbit.io/api/meta) - Used for fetching weather data. Please see WeatherBit's [Terms of Service](https://www.weatherbit.io/terms).
+- **Google Places API** (https://developers.google.com/maps/documentation/places/web-service)
+  - Please see Google's [Terms of Service](https://developers.google.com/terms) for more details.
+
+- **WeatherBit API** (https://www.weatherbit.io/api/meta)
+  - Please see WeatherBit's [Terms of Service](https://www.weatherbit.io/terms) for more details.
+
 

@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.myapp.weatherapp.fragments.CurrentWeatherFragment;
 import com.myapp.weatherapp.fragments.ForecastWeatherFragment;
-import com.myapp.weatherapp.fragments.TodayWeatherFragment;
 
 public class WeatherPagerAdapter extends FragmentStateAdapter {
 
@@ -20,7 +20,7 @@ public class WeatherPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new TodayWeatherFragment();
+            return new CurrentWeatherFragment();
         } else {
             return new ForecastWeatherFragment();
         }

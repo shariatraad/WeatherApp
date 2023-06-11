@@ -62,18 +62,9 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="#000000"
-                        app:drawableLeftCompat="@drawable/ic_baseline_wb_sunny_24"
+                        app:drawableLeftCompat="@drawable/ic_baseline_trending_up_24"
                         android:drawablePadding="8dp" />
 
-                    <TextView
-                        android:id="@+id/tempLowTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="#000000"
-                        app:drawableLeftCompat="@drawable/ic_baseline_ac_unit_24"
-                        android:drawablePadding="8dp" />
 
                     <TextView
                         android:id="@+id/precipitationTextView"
@@ -84,6 +75,17 @@
                         android:textColor="#000000"
                         app:drawableLeftCompat="@drawable/ic_baseline_cloud_24"
                         android:drawablePadding="8dp" />
+
+                    <TextView
+                        android:id="@+id/tempLowTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#000000"
+                        app:drawableLeftCompat="@drawable/ic_baseline_trending_down_24"
+                        android:drawablePadding="8dp" />
+
 
                 </LinearLayout>
 

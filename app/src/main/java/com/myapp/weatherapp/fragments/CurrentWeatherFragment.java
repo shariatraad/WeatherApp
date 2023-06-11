@@ -10,7 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.NoConnectionError;
@@ -26,22 +28,20 @@ import com.myapp.weatherapp.viewmodels.WeatherViewModel;
 
 import org.json.JSONException;
 
-import java.util.List;
-
-public class TodayWeatherFragment extends Fragment {
+public class CurrentWeatherFragment extends Fragment {
 
     private TextView dayOfWeekTextView;
     private TextView dateTextView;
-    private TextView tempHighTextView;
-    private TextView tempLowTextView;
-    private TextView precipitationTextView;
+    private TextView currentTempTextView;
+    private TextView currentSunriseTextView;
+    private TextView currentSunsetTextView;
     private ImageView weatherIcon;
     private ProgressBar progressBar;
     private LinearLayout parentLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_today_weather, container, false);
+        View view = inflater.inflate(R.layout.fragment_current_weather, container, false);
         setupViews(view);
         setupWeatherViewModel();
         return view;
@@ -50,36 +50,41 @@ public class TodayWeatherFragment extends Fragment {
     private void setupViews(View view) {
         parentLayout = view.findViewById(R.id.parentLayout);
         progressBar = view.findViewById(R.id.progressBar);
-        dayOfWeekTextView = view.findViewById(R.id.todayTextView);
-        dateTextView = view.findViewById(R.id.todayDateTextView);
-        tempHighTextView = view.findViewById(R.id.todayTempHighTextView);
-        tempLowTextView = view.findViewById(R.id.todayTempLowTextView);
-        precipitationTextView = view.findViewById(R.id.todayPrecipitationTextView);
-        weatherIcon = view.findViewById(R.id.todayWeatherIcon);
-
+        dayOfWeekTextView = view.findViewById(R.id.currentTextView);
+        dateTextView = view.findViewById(R.id.currentDateTextView);
+        currentTempTextView = view.findViewById(R.id.currentTempTextView);
+        currentSunriseTextView = view.findViewById(R.id.currentSunriseTextView);
+        currentSunsetTextView = view.findViewById(R.id.currentSunsetTextView);
+        weatherIcon = view.findViewById(R.id.currentWeatherIcon);
         parentLayout.setVisibility(View.GONE);
 
     }
 
+
     private void setupWeatherViewModel() {
         WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
-        weatherViewModel.getWeatherItemsLiveData().observe(getViewLifecycleOwner(), this::handleTodayWeatherResponse);
+        weatherViewModel.getCurrentWeatherLiveData().observe(getViewLifecycleOwner(), this::handleCurrentWeatherResponse);
         weatherViewModel.getState().observe(getViewLifecycleOwner(), this::handleLoadState);
+        weatherViewModel.getChosenLocation().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String newLocation) {
+                weatherViewModel.getCurrentWeather(requireActivity());
+            }
+        });
+
     }
 
-    private void handleTodayWeatherResponse(List<WeatherItem> weatherItems) {
-        if (!weatherItems.isEmpty()) {
-            WeatherItem todayWeather = weatherItems.get(0);
-            dayOfWeekTextView.setText(DateUtils.formatDayOfWeek(todayWeather.getDate()));
-            dateTextView.setText(DateUtils.formatDate(todayWeather.getDate()));
-            tempHighTextView.setText(getString(R.string.forecast_temp_high, todayWeather.getTempMax()));
-            tempLowTextView.setText(getString(R.string.forecast_temp_low, todayWeather.getTempMin()));
-            precipitationTextView.setText(getString(R.string.forecast_precipitation, todayWeather.getPrecipitation()));
 
-            String conditionCode = todayWeather.getWeatherCode();
-            int iconResource = WeatherIconMapper.getWeatherIconResource(conditionCode);
-            weatherIcon.setImageResource(iconResource);
-        }
+    private void handleCurrentWeatherResponse(WeatherItem currentWeather) {
+
+        dayOfWeekTextView.setText(DateUtils.formatDayOfWeekCurrent(currentWeather.getDate(), currentWeather.getTimeZone()));
+        dateTextView.setText(DateUtils.formatDateCurrent(currentWeather.getDate(), currentWeather.getTimeZone()));
+        currentTempTextView.setText(getString(R.string.current_temp, currentWeather.getTempCurrent()));
+        currentSunriseTextView.setText(DateUtils.convertUtcToLocal(currentWeather.getSunrise(), currentWeather.getTimeZone()));
+        currentSunsetTextView.setText(DateUtils.convertUtcToLocal(currentWeather.getSunset(), currentWeather.getTimeZone()));
+        String conditionCode = currentWeather.getWeatherCode();
+        int iconResource = WeatherIconMapper.getWeatherIconResource(conditionCode);
+        weatherIcon.setImageResource(iconResource);
     }
 
     private void handleLoadState(LoadState state) {
