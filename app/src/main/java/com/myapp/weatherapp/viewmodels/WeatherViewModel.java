@@ -16,7 +16,6 @@ public class WeatherViewModel extends ViewModel {
     private final MutableLiveData<List<WeatherItem>> weatherItemsLiveData = new MutableLiveData<>();
     private final MutableLiveData<LoadState> state = new MutableLiveData<>();
     private final WeatherService weatherService = new WeatherService();
-    private String chosenLocation;
 
     public LiveData<List<WeatherItem>> getWeatherItemsLiveData() {
         return weatherItemsLiveData;
@@ -26,12 +25,7 @@ public class WeatherViewModel extends ViewModel {
         return state;
     }
 
-    public void setChosenLocation(String chosenLocation) {
-        this.chosenLocation = chosenLocation;
-    }
-
     public void getWeatherForecast(Context context, String location) {
-        this.chosenLocation = location;
         state.setValue(new LoadState.Loading());
         weatherService.getWeatherForecast(context, location,
                 this::handleWeatherForecastResponse,

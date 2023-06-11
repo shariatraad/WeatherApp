@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/today_weather"
+        android:icon="@drawable/ic_baseline_wb_sunny_24"
+        android:title="@string/today" />
+
+    <item
+        android:id="@+id/weather_forecast"
+        android:icon="@drawable/ic_baseline_cloud_24"
+        android:title="@string/forecast" />
+</menu>

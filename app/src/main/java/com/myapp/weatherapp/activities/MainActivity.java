@@ -2,11 +2,13 @@ package com.myapp.weatherapp.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,11 +16,13 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,6 +37,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.myapp.weatherapp.R;
 import com.myapp.weatherapp.adapters.WeatherPagerAdapter;
 import com.myapp.weatherapp.models.WeatherItem;
@@ -47,8 +52,6 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
-
     private boolean isAutocompleteVisible = true;
     private boolean isSyncing = false;
     private boolean isFirstSync = true;
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private WeatherViewModel weatherViewModel;
     private AutocompleteSupportFragment autocompleteFragment;
     private FusedLocationProviderClient fusedLocationClient;
+    private ViewPager2 viewPager;
+    private BottomNavigationView bottomNavigationView;
 
 
     @Override
@@ -71,12 +76,17 @@ public class MainActivity extends AppCompatActivity {
         setupLocation();
         setupPlacePicker();
         setupViewPager();
+        setupBottomNavigation();
+
+        if (getShowDialog()) {
+            showApiAttributionDialog();
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+        if (requestCode == Constants.REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastLocation();
             } else {
@@ -114,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void setupViews() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -122,13 +131,40 @@ public class MainActivity extends AppCompatActivity {
         }
         autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-    }
 
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        viewPager = findViewById(R.id.viewPager);
+
+    }
 
     private void setupViewPager() {
         WeatherPagerAdapter weatherPagerAdapter = new WeatherPagerAdapter(this);
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(weatherPagerAdapter);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    bottomNavigationView.setSelectedItemId(R.id.today_weather);
+                } else {
+                    bottomNavigationView.setSelectedItemId(R.id.weather_forecast);
+                }
+            }
+        });
+
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.today_weather) {
+                viewPager.setCurrentItem(0);
+                return true;
+            } else if (item.getItemId() == R.id.weather_forecast) {
+                viewPager.setCurrentItem(1);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void setupWeatherViewModel() {
@@ -141,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.REQUEST_LOCATION_PERMISSION);
         } else {
             getLastLocation();
         }
@@ -174,6 +210,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setShowDialog(boolean value) {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, value);
+        editor.apply();
+    }
+
+    private boolean getShowDialog() {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.getBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, true);
+    }
+
+    private void showApiAttributionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null);
+
+        CheckBox checkBox = view.findViewById(R.id.checkbox);
+        builder.setView(view);
+
+        builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
+            setShowDialog(!checkBox.isChecked());
+        });
+
+        builder.create().show();
+    }
+
     private void getLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -184,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
                     chosenLocation = getCityName(this, location.getLatitude(), location.getLongitude());
                 }
                 getWeatherForecast(chosenLocation);
-
             });
         }
     }
@@ -207,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
         if (chosenLocation != null) {
             startSync();
             setTitleAsCityName(chosenLocation);
-            weatherViewModel.setChosenLocation(chosenLocation);
             weatherViewModel.getWeatherForecast(this, chosenLocation);
         }
     }
@@ -219,13 +279,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void animateIcon(ImageView imageView) {
-        RotateAnimation rotateAnimation = new RotateAnimation(
-                0f,
-                360f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f
+        RotateAnimation rotateAnimation = new RotateAnimation(0f, 360f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
         );
         rotateAnimation.setDuration(750);
         rotateAnimation.setInterpolator(new LinearInterpolator());

@@ -16,4 +16,7 @@
     <string name="can_not_find_city_name">Cannot find the city name</string>
     <string name="action_sync">Sync weather data</string>
     <string name="sync_finished">Weather data updated successfully!</string>
+    <string name="today">Today</string>
+    <string name="forecast">Forecast</string>
+    <string name="do_not_show_again">Don\'t show this again</string>
 </resources>
