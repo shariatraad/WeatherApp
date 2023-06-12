@@ -26,11 +26,10 @@ public class WeatherViewModel extends ViewModel {
 
     private final int MAX_RETRIES = 3;
     private final long RETRY_DELAY_MS = 2000;
+    private final Handler retryHandler = new Handler();
     private int retryCountCurrentWeather = 0;
     private int retryCountWeatherForecast = 0;
-
     private WeakReference<Context> contextRef;
-    private final Handler retryHandler = new Handler();
 
     public LiveData<List<WeatherItem>> getWeatherForecastLiveData() {
         return weatherForecastLiveData;
@@ -54,14 +53,14 @@ public class WeatherViewModel extends ViewModel {
                 this::handleWeatherForecastError);
     }
 
-    // Setter for chosen location
-    public void setChosenLocation(String newLocation) {
-        chosenLocation.postValue(newLocation);
-    }
-
     // Getter for chosen location
     public LiveData<String> getChosenLocation() {
         return chosenLocation;
+    }
+
+    // Setter for chosen location
+    public void setChosenLocation(String newLocation) {
+        chosenLocation.postValue(newLocation);
     }
 
     // Refresh the weather data

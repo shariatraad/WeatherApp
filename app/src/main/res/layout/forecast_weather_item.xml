@@ -1,19 +1,19 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="5dp"
     app:cardBackgroundColor="#FFFFFF"
-    app:cardUseCompatPadding="true"
-    app:cardElevation="5dp"
     app:cardCornerRadius="8dp"
-    android:layout_marginHorizontal="5dp">
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/card_background"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@drawable/card_background">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -24,8 +24,8 @@
                 android:id="@+id/dayTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_marginEnd="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -53,10 +53,10 @@
                     android:id="@+id/tempHighTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#000000"
-                    app:drawableLeftCompat="@drawable/ic_baseline_trending_up_24"
-                    android:drawablePadding="8dp" />
+                    app:drawableLeftCompat="@drawable/ic_baseline_trending_up_24" />
 
 
                 <TextView
@@ -64,20 +64,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:drawablePadding="8dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#000000"
-                    app:drawableLeftCompat="@drawable/ic_baseline_cloud_24"
-                    android:drawablePadding="8dp" />
+                    app:drawableLeftCompat="@drawable/ic_baseline_cloud_24" />
 
                 <TextView
                     android:id="@+id/tempLowTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:drawablePadding="8dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#000000"
-                    app:drawableLeftCompat="@drawable/ic_baseline_trending_down_24"
-                    android:drawablePadding="8dp" />
+                    app:drawableLeftCompat="@drawable/ic_baseline_trending_down_24" />
 
             </LinearLayout>
 

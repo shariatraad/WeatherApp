@@ -243,18 +243,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Retrieve the flag for showing the API attribution dialog
+    private boolean getShowDialog() {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.getBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, true);
+    }
+
     // Set the flag for showing the API attribution dialog
     private void setShowDialog(boolean value) {
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, value);
         editor.apply();
-    }
-
-    // Retrieve the flag for showing the API attribution dialog
-    private boolean getShowDialog() {
-        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        return preferences.getBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, true);
     }
 
     // Show the API attribution dialog

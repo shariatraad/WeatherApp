@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true">
 
     <LinearLayout
@@ -24,26 +24,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:textAppearance="?attr/textAppearanceHeadline3"
-            android:textColor="@color/white"
-            android:textStyle="bold"
             android:shadowColor="@color/black"
             android:shadowDx="1"
             android:shadowDy="1"
-            android:shadowRadius="1" />
+            android:shadowRadius="1"
+            android:textAppearance="?attr/textAppearanceHeadline3"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/currentTempTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            android:textColor="@color/white"
-            android:textStyle="bold"
             android:shadowColor="@color/black"
             android:shadowDx="1"
             android:shadowDy="1"
-            android:shadowRadius="1" />
+            android:shadowRadius="1"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/currentDateTextView"
@@ -57,8 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
-            app:cardUseCompatPadding="true"
-            app:cardElevation="6dp">
+            app:cardElevation="6dp"
+            app:cardUseCompatPadding="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -69,9 +69,9 @@
                     android:id="@+id/sunriseLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_alignParentStart="true">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -89,10 +89,10 @@
                             android:id="@+id/sunriseLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/sunrise"
                             android:textAppearance="?attr/textAppearanceBody2"
                             android:textColor="#EABC5A"
-                            android:textStyle="bold"
-                            android:text="@string/sunrise" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/currentSunriseTextView"
@@ -109,9 +109,9 @@
                     android:id="@+id/sunsetLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_alignParentEnd="true">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -129,10 +129,10 @@
                             android:id="@+id/sunsetLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/sunset"
                             android:textAppearance="?attr/textAppearanceBody2"
                             android:textColor="#ACACAC"
-                            android:textStyle="bold"
-                            android:text="@string/sunset" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/currentSunsetTextView"
