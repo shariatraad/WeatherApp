@@ -16,6 +16,5 @@
         <item name="windowNoTitle">false</item>
         <!-- Customize your theme here. -->
         <item name="android:textColorPrimary">@android:color/white</item>
-
     </style>
 </resources>

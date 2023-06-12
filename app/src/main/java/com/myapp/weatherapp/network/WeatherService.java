@@ -20,30 +20,37 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// Service to fetch weather data from the server
 public class WeatherService {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    // Constructor
     public WeatherService() {
     }
 
+    // Fetch the weather forecast
     public void getWeatherForecast(Context context, String chosenLocation, Response.Listener<List<WeatherItem>> listener, Response.ErrorListener errorListener) {
         String url = Constants.API_URL_BASE + chosenLocation + "&days=" + Constants.NUMBER_OF_DAYS + "&key=" + Constants.API_KEY_WEATHER;
 
+        // Get the request queue
         RequestQueue queue = RequestQueueSingleton.getInstance(context);
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> executorService.execute(() -> {
                     try {
+                        // Parse the server response
                         List<WeatherItem> weatherItems = parseWeatherForecastResponse(response);
                         ((Activity) context).runOnUiThread(() -> listener.onResponse(weatherItems));
                     } catch (JSONException e) {
                         ((Activity) context).runOnUiThread(() -> errorListener.onErrorResponse(new VolleyError(e)));
                     }
                 }), errorListener);
-
+        // Add the request to the queue
         queue.add(stringRequest);
     }
 
+    // Parse the server response for the weather forecast
     public List<WeatherItem> parseWeatherForecastResponse(String jsonResponse) throws JSONException {
         JSONObject response = new JSONObject(jsonResponse);
         JSONArray forecastData = response.getJSONArray("data");
@@ -65,23 +72,28 @@ public class WeatherService {
         return newWeatherItems;
     }
 
+    // Fetch the current weather
     public void getCurrentWeather(Context context, String chosenLocation, Response.Listener<WeatherItem> listener, Response.ErrorListener errorListener) {
         String url = Constants.API_URL_BASE_CURRENT + chosenLocation + "&key=" + Constants.API_KEY_WEATHER;
 
+        // Get the request queue
         RequestQueue queue = RequestQueueSingleton.getInstance(context);
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> executorService.execute(() -> {
                     try {
+                        // Parse the server response
                         WeatherItem weatherItem = parseCurrentWeatherResponse(response);
                         ((Activity) context).runOnUiThread(() -> listener.onResponse(weatherItem));
                     } catch (JSONException e) {
                         ((Activity) context).runOnUiThread(() -> errorListener.onErrorResponse(new VolleyError(e)));
                     }
                 }), errorListener);
-
+        // Add the request to the queue
         queue.add(stringRequest);
     }
 
+    // Parse the server response for the current weather
     public WeatherItem parseCurrentWeatherResponse(String jsonResponse) throws JSONException {
         JSONObject response = new JSONObject(jsonResponse);
         JSONArray dataArray = response.getJSONArray("data");
@@ -93,6 +105,8 @@ public class WeatherService {
         String timeZoneString = weatherData.getString("timezone");
         float tempCurrent = (float) weatherData.getDouble("temp");
         String weatherCode = weatherData.getJSONObject("weather").getString("code");
+
         return new WeatherItem(dateString, sunriseString, sunsetString, timeZoneString, tempCurrent, weatherCode);
     }
 }
+

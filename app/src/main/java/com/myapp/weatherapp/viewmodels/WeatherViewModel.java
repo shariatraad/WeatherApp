@@ -16,6 +16,7 @@ import com.myapp.weatherapp.network.WeatherService;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+// ViewModel class for the weather data
 public class WeatherViewModel extends ViewModel {
     private final MutableLiveData<List<WeatherItem>> weatherForecastLiveData = new MutableLiveData<>();
     private final MutableLiveData<WeatherItem> currentWeatherLiveData = new MutableLiveData<>();
@@ -43,6 +44,7 @@ public class WeatherViewModel extends ViewModel {
         return state;
     }
 
+    // Request the weather forecast
     public void getWeatherForecast(Context context) {
         this.contextRef = new WeakReference<>(context);
         state.setValue(new LoadState.Loading());
@@ -52,19 +54,23 @@ public class WeatherViewModel extends ViewModel {
                 this::handleWeatherForecastError);
     }
 
+    // Setter for chosen location
     public void setChosenLocation(String newLocation) {
         chosenLocation.postValue(newLocation);
     }
 
+    // Getter for chosen location
     public LiveData<String> getChosenLocation() {
         return chosenLocation;
     }
 
+    // Refresh the weather data
     public void refreshData(Context context) {
         getCurrentWeather(context);
         getWeatherForecast(context);
     }
 
+    // Request the current weather
     public void getCurrentWeather(Context context) {
         this.contextRef = new WeakReference<>(context);
         String location = chosenLocation.getValue();
@@ -76,12 +82,14 @@ public class WeatherViewModel extends ViewModel {
         }
     }
 
+    // Handler for successful responses for the weather forecast
     private void handleWeatherForecastResponse(List<WeatherItem> newWeatherItems) {
         state.postValue(new LoadState.Success());
         weatherForecastLiveData.postValue(newWeatherItems);
         retryCountWeatherForecast = 0;
     }
 
+    // Handler for failed responses for the weather forecast
     private void handleWeatherForecastError(VolleyError error) {
         if ((error instanceof TimeoutError || error instanceof NoConnectionError)
                 && retryCountWeatherForecast < MAX_RETRIES) {
@@ -93,12 +101,14 @@ public class WeatherViewModel extends ViewModel {
         }
     }
 
+    // Handler for successful responses for the current weather
     private void handleCurrentWeatherResponse(WeatherItem currentWeather) {
         state.postValue(new LoadState.Success());
         currentWeatherLiveData.postValue(currentWeather);
         retryCountCurrentWeather = 0;
     }
 
+    // Handler for failed responses for the current weather
     private void handleCurrentWeatherError(VolleyError error) {
         if ((error instanceof TimeoutError || error instanceof NoConnectionError)
                 && retryCountCurrentWeather < MAX_RETRIES) {

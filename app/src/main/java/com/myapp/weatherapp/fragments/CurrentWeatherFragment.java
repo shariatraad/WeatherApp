@@ -28,6 +28,7 @@ import com.myapp.weatherapp.viewmodels.WeatherViewModel;
 
 import org.json.JSONException;
 
+// Fragment displaying the current weather information.
 public class CurrentWeatherFragment extends Fragment {
 
     private TextView dayOfWeekTextView;
@@ -40,6 +41,7 @@ public class CurrentWeatherFragment extends Fragment {
     private LinearLayout parentLayout;
 
     @Override
+    // Inflate the layout for this fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_current_weather, container, false);
         setupViews(view);
@@ -47,6 +49,7 @@ public class CurrentWeatherFragment extends Fragment {
         return view;
     }
 
+    // Find and assign all the UI elements
     private void setupViews(View view) {
         parentLayout = view.findViewById(R.id.parentLayout);
         progressBar = view.findViewById(R.id.progressBar);
@@ -57,10 +60,9 @@ public class CurrentWeatherFragment extends Fragment {
         currentSunsetTextView = view.findViewById(R.id.currentSunsetTextView);
         weatherIcon = view.findViewById(R.id.currentWeatherIcon);
         parentLayout.setVisibility(View.GONE);
-
     }
 
-
+    // Setup the ViewModel and LiveData observers for the fragment
     private void setupWeatherViewModel() {
         WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         weatherViewModel.getCurrentWeatherLiveData().observe(getViewLifecycleOwner(), this::handleCurrentWeatherResponse);
@@ -71,12 +73,10 @@ public class CurrentWeatherFragment extends Fragment {
                 weatherViewModel.getCurrentWeather(requireActivity());
             }
         });
-
     }
 
-
+    // Handle the response from the ViewModel's LiveData for the current weather
     private void handleCurrentWeatherResponse(WeatherItem currentWeather) {
-
         dayOfWeekTextView.setText(DateUtils.formatDayOfWeekCurrent(currentWeather.getDate(), currentWeather.getTimeZone()));
         dateTextView.setText(DateUtils.formatDateCurrent(currentWeather.getDate(), currentWeather.getTimeZone()));
         currentTempTextView.setText(getString(R.string.current_temp, currentWeather.getTempCurrent()));
@@ -87,6 +87,7 @@ public class CurrentWeatherFragment extends Fragment {
         weatherIcon.setImageResource(iconResource);
     }
 
+    // Handle the current loading state and update the UI accordingly
     private void handleLoadState(LoadState state) {
         if (state instanceof LoadState.Loading) {
             showLoadingState();
@@ -100,24 +101,29 @@ public class CurrentWeatherFragment extends Fragment {
         }
     }
 
+    // Show the loading state UI
     private void showLoadingState() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
+    // Hide the loading state UI
     private void hideLoadingState() {
         progressBar.setVisibility(View.GONE);
     }
 
+    // Show the success state UI
     private void handleSuccessState() {
         progressBar.setVisibility(View.GONE);
         parentLayout.setVisibility(View.VISIBLE);
     }
 
+    // Handle any error that might have occurred during loading and display the appropriate message
     private void handleVolleyError(Throwable error) {
         String errorMessage = getErrorMessage(error);
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
+    // Get the error message based on the type of error that occurred
     private String getErrorMessage(Throwable error) {
         if (error instanceof VolleyError) {
             VolleyError volleyError = (VolleyError) error;
@@ -133,7 +139,6 @@ public class CurrentWeatherFragment extends Fragment {
                 return getString(R.string.server_error);
             }
         }
-
         return getString(R.string.unknown_error_occurred);
     }
 

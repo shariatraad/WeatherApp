@@ -12,10 +12,12 @@ import org.threeten.bp.format.DateTimeParseException;
 
 import java.util.Locale;
 
+// Class responsible for handling date-time related utilities in the application
 public class DateUtils {
 
     private static final String TAG = DateUtils.class.getSimpleName();
 
+    // Format the current day of the week based on the provided datetime string and timezone ID
     public static String formatDayOfWeekCurrent(String dateTimeStr, String timeZoneId) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd:HH", Locale.ENGLISH);
@@ -31,6 +33,7 @@ public class DateUtils {
         }
     }
 
+    // Format the current date based on the provided datetime string and timezone ID
     public static String formatDateCurrent(String dateTimeStr, String timeZoneId) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd:HH", Locale.ENGLISH);
@@ -46,6 +49,7 @@ public class DateUtils {
         }
     }
 
+    // Format the forecast day of the week based on the provided date string and timezone ID
     public static String formatDayOfWeekForecast(String dateStr, String timeZoneId) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
@@ -61,6 +65,7 @@ public class DateUtils {
         }
     }
 
+    // Format the forecast date based on the provided date string and timezone ID
     public static String formatDateForecast(String dateStr, String timeZoneId) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
@@ -76,6 +81,7 @@ public class DateUtils {
         }
     }
 
+    // Convert a UTC time string to local time based on the provided timezone ID
     public static String convertUtcToLocal(String utcTimeStr, String timeZoneId) {
         try {
             LocalTime utcTime = LocalTime.parse(utcTimeStr, DateTimeFormatter.ofPattern("HH:mm"));

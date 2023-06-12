@@ -17,10 +17,12 @@ import com.myapp.weatherapp.utils.WeatherIconMapper;
 
 import java.util.List;
 
+// Adapter for the RecyclerView in the forecast weather screen
 public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeatherAdapter.MyViewHolder> {
     private final List<WeatherItem> weatherItems;
     private final Context context;
 
+    // Constructor for the ForecastWeatherAdapter.
     public ForecastWeatherAdapter(List<WeatherItem> weatherItems, Context context) {
         this.weatherItems = weatherItems;
         this.context = context;
@@ -28,12 +30,14 @@ public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeather
 
     @NonNull
     @Override
+    // Inflate layout from XML and return the holder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.forecast_weather_item, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
+    // Populate data into the item through holder
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         WeatherItem weatherItem = weatherItems.get(position);
 
@@ -46,14 +50,15 @@ public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeather
         String conditionCode = weatherItem.getWeatherCode();
         int iconResource = WeatherIconMapper.getWeatherIconResource(conditionCode);
         holder.weatherIcon.setImageResource(iconResource);
-
     }
 
     @Override
+    // Indicate the number of items to display
     public int getItemCount() {
         return weatherItems.size();
     }
 
+    // Define the view holder, holding the individual list items.
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView dayTextView;
         TextView dateTextView;
@@ -72,7 +77,4 @@ public class ForecastWeatherAdapter extends RecyclerView.Adapter<ForecastWeather
             weatherIcon = itemView.findViewById(R.id.weatherIcon);
         }
     }
-
 }
-
-

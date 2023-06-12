@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+// Main activity of the application
 public class MainActivity extends AppCompatActivity {
 
     private boolean isAutocompleteVisible = true;
@@ -79,18 +80,21 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager();
         setupBottomNavigation();
 
+        // Display API Attribution Dialog only when needed
         if (getShowDialog()) {
             showApiAttributionDialog();
         }
     }
 
     @Override
+    // Handle the result of the location permission request
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == Constants.REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
+                getLastLocation();  // If permission granted, get the last known location
             } else {
+                // If permission not granted, default to a specific location
                 chosenLocation = Constants.DEFAULT_CITY;
                 setTitleAsCityName(chosenLocation);
                 weatherViewModel.setChosenLocation(chosenLocation);
@@ -99,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    // Inflate the menu items onto the action bar
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
@@ -108,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // Handle the user interaction with menu items in the action bar
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        // Show or hide the autocomplete feature when the search icon is clicked
         if (itemId == R.id.menu_search) {
             if (isAutocompleteVisible) {
                 hideAutocompleteFragment();
@@ -118,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         } else if (itemId == R.id.menu_sync) {
+            // Refresh weather data when sync icon is clicked and not already syncing
             if (!isSyncing) {
                 weatherViewModel.refreshData(this);
             }
@@ -126,26 +134,30 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Initialize views and fetch references to UI elements
     private void setupViews() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
         }
+        // Get the autocomplete fragment reference
         autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.viewPager);
-
     }
 
+    // Setup the ViewPager and its page change listener
     private void setupViewPager() {
         WeatherPagerAdapter weatherPagerAdapter = new WeatherPagerAdapter(this);
         viewPager.setAdapter(weatherPagerAdapter);
 
+        // Add a page change callback to handle UI updates when page changes
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+                // Update the bottom navigation item based on the page selected
                 if (position == 0) {
                     bottomNavigationView.setSelectedItemId(R.id.current_weather);
                 } else {
@@ -153,11 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
+    // Set up the behavior of the bottom navigation bar
     private void setupBottomNavigation() {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            // Change the current item of the ViewPager based on the navigation item selected
             if (item.getItemId() == R.id.current_weather) {
                 viewPager.setCurrentItem(0);
                 return true;
@@ -169,8 +182,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Initialize WeatherViewModel and set up its state observer
     private void setupWeatherViewModel() {
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+        // Observe changes in the load state of the weather data and start or finish the sync animation
         weatherViewModel.getState().observe(this, loadState -> {
             if (loadState instanceof LoadState.Loading) {
                 startSyncAnimation();
@@ -180,32 +195,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Set up location services and request location permissions if necessary
     private void setupLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // Check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+            // Request location permission if not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.REQUEST_LOCATION_PERMISSION);
         } else {
+            // If location permission is already granted, get the last known location
             getLastLocation();
         }
     }
 
+    // Set up the autocomplete feature for location search
     private void setupPlacePicker() {
+        // Initialize Places API
         Places.initialize(getApplicationContext(), Constants.API_KEY_PLACES);
         autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
         hideAutocompleteFragment();
 
+        // Handle place selection events
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+                // When a place is selected, update the chosen location and weather data
                 chosenLocation = place.getName();
                 setTitleAsCityName(chosenLocation);
                 weatherViewModel.setChosenLocation(chosenLocation);
                 hideAutocompleteFragment();
             }
 
+            // Handle errors during place selection
             @Override
             public void onError(@NonNull Status status) {
                 if (status.isCanceled()) {
@@ -219,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Set the flag for showing the API attribution dialog
     private void setShowDialog(boolean value) {
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -226,15 +251,16 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    // Retrieve the flag for showing the API attribution dialog
     private boolean getShowDialog() {
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return preferences.getBoolean(Constants.DIALOG_KEY_SHARED_PREFERENCES, true);
     }
 
+    // Show the API attribution dialog
     private void showApiAttributionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null);
-
         CheckBox checkBox = view.findViewById(R.id.checkbox);
         builder.setView(view);
 
@@ -245,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    // Get the last known location
     private void getLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -266,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    // Translate coordinates into a city name
     private String getCityName(Context context, double latitude, double longitude) {
         String cityName = "";
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
@@ -281,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
         return cityName;
     }
 
+    // Animate the refresh/sync icon
     public void animateIcon(ImageView imageView) {
         RotateAnimation rotateAnimation = new RotateAnimation(0f, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f,
@@ -295,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Start the sync animation
     private void startSyncAnimation() {
         isSyncing = true;
         if (syncMenuItem != null) {
@@ -305,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Finish the sync animation
     private void finishSyncAnimation() {
         isSyncing = false;
         if (syncMenuItem != null) {
@@ -315,12 +345,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Set the title of the action bar as the name of the chosen city
     private void setTitleAsCityName(String chosenLocation) {
         if (actionBar != null && chosenLocation != null) {
             actionBar.setTitle(chosenLocation);
         }
     }
 
+    // Show the autocomplete fragment
     private void showAutocompleteFragment() {
         if (!isAutocompleteVisible) {
             getSupportFragmentManager().beginTransaction()
@@ -331,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Hide the autocomplete fragment
     private void hideAutocompleteFragment() {
         if (isAutocompleteVisible) {
             getSupportFragmentManager().beginTransaction()

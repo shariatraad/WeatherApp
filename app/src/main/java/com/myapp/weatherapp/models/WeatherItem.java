@@ -1,5 +1,6 @@
 package com.myapp.weatherapp.models;
 
+// Class that represents an item of weather data
 public class WeatherItem {
     private final String date;
     private final Float tempMin;
@@ -11,7 +12,7 @@ public class WeatherItem {
     private final String sunset;
     private final String timeZone;
 
-    // constructor for forecast weather
+    // Constructor used for creating a WeatherItem object for forecasted weather data
     public WeatherItem(String date, String timeZone, Float tempMin, Float tempMax, float precipitation, String weatherCode) {
         this.date = date;
         this.tempMin = tempMin;
@@ -25,7 +26,7 @@ public class WeatherItem {
 
     }
 
-    // constructor for current weather
+    // Constructor used for creating a WeatherItem object for current weather data
     public WeatherItem(String date, String sunrise, String sunset, String timeZone, float tempCurrent, String weatherCode) {
         this.date = date;
         this.sunrise = sunrise;

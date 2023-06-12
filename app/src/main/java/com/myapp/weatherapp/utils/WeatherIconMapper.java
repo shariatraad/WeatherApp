@@ -3,8 +3,10 @@ package com.myapp.weatherapp.utils;
 import com.myapp.weatherapp.R;
 
 
+// Class responsible for mapping weather condition codes to corresponding weather icons in the app's resources
 public class WeatherIconMapper {
 
+    // Get the drawable resource ID for weather icons based on the provided weather condition code
     public static int getWeatherIconResource(String conditionCode) {
         if (conditionCode.equals("800")) {
             return R.drawable.icon_clear_sky;

@@ -30,6 +30,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Fragment displaying the forecasted weather information
 public class ForecastWeatherFragment extends Fragment {
 
     private List<WeatherItem> weatherItems;
@@ -38,6 +39,7 @@ public class ForecastWeatherFragment extends Fragment {
     private ProgressBar progressBar;
 
     @Override
+    // Inflate the layout for this fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_forecast_weather, container, false);
         setupViews(view);
@@ -46,12 +48,14 @@ public class ForecastWeatherFragment extends Fragment {
         return view;
     }
 
+    // Find and assign all the UI elements
     private void setupViews(View view) {
         progressBar = view.findViewById(R.id.progressBar);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setVisibility(View.GONE);
     }
 
+    // Setup the RecyclerView and its adapter
     private void setupAdapter() {
         weatherItems = new ArrayList<>();
         forecastWeatherAdapter = new ForecastWeatherAdapter(weatherItems, getContext());
@@ -59,6 +63,7 @@ public class ForecastWeatherFragment extends Fragment {
         recyclerView.setAdapter(forecastWeatherAdapter);
     }
 
+    // Setup the ViewModel and LiveData observer for the fragment
     private void setupWeatherViewModel() {
         WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         weatherViewModel.getWeatherForecastLiveData().observe(getViewLifecycleOwner(), this::handleWeatherForecastResponse);
@@ -71,6 +76,7 @@ public class ForecastWeatherFragment extends Fragment {
         });
     }
 
+    // Handle the response from the ViewModel's LiveData for the forecasted weather
     @SuppressLint("NotifyDataSetChanged")
     private void handleWeatherForecastResponse(List<WeatherItem> newWeatherItems) {
         if (newWeatherItems.size() > 1) {
@@ -80,6 +86,7 @@ public class ForecastWeatherFragment extends Fragment {
         }
     }
 
+    // Handle the current loading state and update the UI accordingly
     private void handleLoadState(LoadState state) {
         if (state instanceof LoadState.Loading) {
             showLoadingState();
@@ -93,24 +100,29 @@ public class ForecastWeatherFragment extends Fragment {
         }
     }
 
+    // Show the loading state UI
     private void showLoadingState() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
+    // Hide the loading state UI
     private void hideLoadingState() {
         progressBar.setVisibility(View.GONE);
     }
 
+    // Show the success state UI
     private void handleSuccessState() {
         progressBar.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
     }
 
+    // Handle any error that might have occurred during loading and display the appropriate message
     private void handleVolleyError(Throwable error) {
         String errorMessage = getErrorMessage(error);
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
+    // Get the error message based on the type of error that occurred
     private String getErrorMessage(Throwable error) {
         if (error instanceof VolleyError) {
             VolleyError volleyError = (VolleyError) error;
